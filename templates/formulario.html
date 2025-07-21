@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorización Scout</title>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #signature-pad {
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .button-group {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        #clear-btn {
+            background-color: #f44336;
+        }
+        #download-btn {
+            background-color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulario de Autorización Scout</h1>
+    <form id="autorizacionForm">
+        <div class="form-group">
+            <label for="nombre_padre">Nombre del Padre/Madre/Tutor:</label>
+            <input type="text" id="nombre_padre" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="ci_padre">C.I. del Padre/Madre/Tutor:</label>
+            <input type="text" id="ci_padre" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="parentesco">Parentesco:</label>
+            <select id="parentesco" required>
+                <option value="Padre">Padre</option>
+                <option value="Madre">Madre</option>
+                <option value="Tutor Legal">Tutor Legal</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="nombre_menor">Nombre del Menor:</label>
+            <input type="text" id="nombre_menor" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="ci_menor">C.I. del Menor:</label>
+            <input type="text" id="ci_menor" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="edad_menor">Edad del Menor:</label>
+            <input type="number" id="edad_menor" min="5" max="18" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="actividad">Nombre de la Actividad:</label>
+            <input type="text" id="actividad" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="ciudad">Ciudad donde se realiza:</label>
+            <input type="text" id="ciudad" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="unidad">Unidad Scout:</label>
+            <input type="text" id="unidad" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="jefe_unidad">Jefe de Unidad:</label>
+            <input type="text" id="jefe_unidad" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="fecha_inicio">Fecha de Inicio (dd/mm/aaaa):</label>
+            <input type="text" id="fecha_inicio" placeholder="Ej: 15/03/2025" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="fecha_fin">Fecha de Regreso (dd/mm/aaaa):</label>
+            <input type="text" id="fecha_fin" placeholder="Ej: 17/03/2025" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="hora_regreso">Hora aproximada de regreso:</label>
+            <input type="text" id="hora_regreso" placeholder="Ej: 18:00" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="mes_anio">Mes y Año de la actividad:</label>
+            <input type="text" id="mes_anio" placeholder="Ej: Marzo de 2025" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Firma del Padre/Madre/Tutor:</label>
+            <canvas id="signature-pad" width="400" height="200"></canvas>
+            <div class="button-group">
+                <button type="button" id="clear-btn">Borrar Firma</button>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button type="submit" id="submit-btn">Generar Autorización</button>
+            <button type="button" id="download-btn" style="display:none;">Descargar PDF</button>
+        </div>
+    </form>
+
+    <script>
+        const canvas = document.getElementById('signature-pad');
+        const signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255)',
+            penColor: 'rgb(0, 0, 0)'
+        });
+        
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            signaturePad.clear();
+        });
+
+        document.getElementById('autorizacionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (signaturePad.isEmpty()) {
+                alert("Por favor, proporcione su firma digital");
+                return;
+            }
+
+            const formData = {
+                nombre_padre: document.getElementById('nombre_padre').value,
+                ci_padre: document.getElementById('ci_padre').value,
+                parentesco: document.getElementById('parentesco').value,
+                nombre_menor: document.getElementById('nombre_menor').value,
+                ci_menor: document.getElementById('ci_menor').value,
+                edad_menor: document.getElementById('edad_menor').value,
+                actividad: document.getElementById('actividad').value,
+                ciudad: document.getElementById('ciudad').value,
+                unidad: document.getElementById('unidad').value,
+                jefe_unidad: document.getElementById('jefe_unidad').value,
+                fecha_inicio: document.getElementById('fecha_inicio').value,
+                fecha_fin: document.getElementById('fecha_fin').value,
+                hora_regreso: document.getElementById('hora_regreso').value,
+                mes_anio: document.getElementById('mes_anio').value,
+                firma: signaturePad.toDataURL()
+            };
+
+            try {
+                const response = await fetch('/generar-autorizacion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const downloadBtn = document.getElementById('download-btn');
+                    
+                    downloadBtn.style.display = 'inline-block';
+                    downloadBtn.onclick = () => {
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `autorizacion_scout_${formData.nombre_menor}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    };
+                    
+                    alert("Autorización generada con éxito. Haga clic en 'Descargar PDF'");
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.error}`);
+                }
+            } catch (error) {
+                alert(`Error de conexión: ${error.message}`);
+            }
+        });
+    </script>
+</body>
+</html>
