@@ -1,17 +1,14 @@
 from flask import Flask
-from .extensions import db  # Importa extensiones
+import os
 
 def create_app():
     app = Flask(__name__)
     
-    # Configuración (usa variables de entorno en Render)
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-fallback')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    # Configuración para Render
+    app.config['UPLOAD_FOLDER'] = '/var/data/autorizaciones'  # Ruta persistente
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
-    # Inicializa extensiones CON la app
-    db.init_app(app)
-    
-    # Registra blueprints
+    # Importa y registra blueprints
     from .routes import main_bp
     app.register_blueprint(main_bp)
     
